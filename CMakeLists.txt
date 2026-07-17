@@ -13,25 +13,18 @@ add_subdirectory("vendor/tinygltf")
 
 add_executable(Tarea2
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Tarea2-JhonatanHomsany.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/GLTFManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/UIManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/GLFWManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Shader.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Renderer.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Mesh.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Camera.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Application.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Scene.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/RevolutionSolidGenerator.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/BasicShapesGenerator.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Ray.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/InputPicker.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/ShadowManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/TextureManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Camera.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/GLFWManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Volume.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/VolumeRenderer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Shader.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/UIManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/FileManager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/tinyfiledialogs.c"
 )
 
-set_target_properties(Tarea2 PROPERTIES 
+set_target_properties(Tarea2 PROPERTIES
     OUTPUT_NAME "Tarea2-JhonatanHomsany"
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
