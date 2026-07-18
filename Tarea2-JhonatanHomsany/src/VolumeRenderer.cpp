@@ -3,6 +3,8 @@
 #include "../include/VolumeRenderer.h"
 #include <glad/glad.h>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 using namespace std;
 
 VolumeRenderer::VolumeRenderer()
@@ -65,6 +67,9 @@ void VolumeRenderer::uploadVolume(const Volume& volume){
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_3D, 0);
+
+    float maxDim = std::max(volume.getX(), std::max(volume.getY(), volume.getZ()));
+    volumeScale = glm::vec3(volume.getX(), volume.getY(), volume.getZ()) / maxDim;
 };
 
 void VolumeRenderer::draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos){
@@ -74,14 +79,18 @@ void VolumeRenderer::draw(const glm::mat4& view, const glm::mat4& projection, co
     glBindTexture(GL_TEXTURE_3D, textureID);
     shader->setInt("volumeTex", 0);
     shader->setVec3("cameraPosition", cameraPos);
-    shader->setInt("displayGas",     displayGas ? 1 : 0);
-    shader->setInt("displayLiquid",  displayLiquid ? 1 : 0);
-    shader->setInt("displayObjects", displayObjects ? 1 : 0);
-    shader->setInt("displayTerrain", displayTerrain ? 1 : 0);
-    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model = glm::scale(glm::mat4(1.0f), volumeScale);  
     shader->setMat4("model", model);
+    shader->setVec3("volumeScale", volumeScale);                 
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
+    shader->setFloat("gasOpacityScale", gasOpacityScale);
+    shader->setFloat("liquidOpacityScale", liquidOpacityScale);
+    shader->setFloat("objectsOpacityScale", objectsOpacityScale);
+    shader->setFloat("terrainOpacityScale", terrainOpacityScale);
+    shader->setFloat("voxelSize", voxelSize);
+    shader->setFloat("densityMin", densityMin);
+    shader->setFloat("densityMax", densityMax);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

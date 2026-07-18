@@ -8,12 +8,17 @@ class VolumeRenderer{
     unsigned int VAO, VBO;
     unsigned int textureID;
     Shader* shader;
-    bool displayGas = true;
-    bool displayLiquid = true;
-    bool displayObjects = true;
-    bool displayTerrain = true;
-
+    
     public:
+        glm::vec3 volumeScale;
+        float gasOpacityScale = 1.0f;
+        float liquidOpacityScale = 1.0f;
+        float objectsOpacityScale = 1.0f;
+        float terrainOpacityScale = 1.0f;
+        float voxelSize = 1.0f;
+        float densityMin = 0.0f;
+        float densityMax = 1.0f;
+
         VolumeRenderer();
         ~VolumeRenderer();
         void init();

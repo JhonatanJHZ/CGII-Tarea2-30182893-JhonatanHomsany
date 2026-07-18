@@ -11,6 +11,7 @@ class Volume;
 class Shader;
 class VolumeRenderer;
 class Camera;
+class GizmoRenderer;
 
 using namespace std;
 
@@ -23,10 +24,11 @@ public:
     Volume* volume;
     VolumeRenderer* volumeRenderer;
     Camera* camera;
+    GizmoRenderer* gizmoRenderer;
 
     bool init();
     void updateAndRender();
-    void setVolume(Volume* newVolume) { delete this->volume; this->volume = newVolume; }
+    void setVolume(Volume* newVolume);
     void cleanup();
     Application();
     ~Application();

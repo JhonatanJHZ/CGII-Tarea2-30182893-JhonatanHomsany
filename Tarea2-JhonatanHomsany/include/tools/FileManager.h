@@ -10,6 +10,8 @@
 
 using namespace std;
 
+class Volume;
+
 class FileManager{
     public:
 
@@ -17,10 +19,13 @@ class FileManager{
     ~FileManager();
     
     string getFilePath();
-    Volume readVolume(const string& filePath);
+    string getSavePath();
+    Volume readVolume(const string& filePath, int x, int y, int z);
+
+    bool saveRawFile(const string&filePath,  Volume* volume);
 
     private:
 
     vector<Voxel> readRawFile(const string& filePath);
-    vector<Voxel> readNrrdFile(const string& filePath);
+    Volume readNrrdFile(const string& filePath);
 };

@@ -4,6 +4,7 @@
 #include "../include/tools/FileManager.h"
 #include "../include/Volume.h"
 #include "../include/VolumeRenderer.h"
+#include "../include/GizmoRenderer.h"
 #include "../include/Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +17,7 @@
 #include <string>
 
 Application::Application()
-    : window(nullptr), glfwManager(nullptr), uiManager(nullptr), fileManager(nullptr), volume(nullptr), volumeRenderer(nullptr), camera(nullptr) {}
+    : window(nullptr), glfwManager(nullptr), uiManager(nullptr), fileManager(nullptr), volume(nullptr), volumeRenderer(nullptr), camera(nullptr), gizmoRenderer(nullptr) {}
 Application::~Application() {
     cleanup();
 }
@@ -30,12 +31,14 @@ bool Application::init() {
     glClearColor(0.15f, 0.15f, 0.18f, 1.0f);
     uiManager = new UIManager(window);
     fileManager = new FileManager();
-    camera = new Camera(glm::vec3(0.5f, 0.5f, 5.0f));
+    camera = new Camera(glm::vec3(0.5f, 0.5f, 2.0f));
     volumeRenderer = new VolumeRenderer();
     volumeRenderer->init();
     setVolume(new Volume(fileManager->readVolume(
-    "../../../Tarea2-JhonatanHomsany/assets/full/raw_world_512x128x512_rgba.raw")));
+    "../../../Tarea2-JhonatanHomsany/assets/full/raw_world_512x128x512_rgba.raw", 512, 128, 512)));
     volumeRenderer->uploadVolume(*volume);
+    gizmoRenderer = new GizmoRenderer();
+    gizmoRenderer->init();
     return true;
 }
 
@@ -67,10 +70,16 @@ void Application::updateAndRender() {
     glm::mat4 view = camera->getViewMatrix();
     glm::mat4 projection = camera->getProjectionMatrix((float)w / (float)h);
     volumeRenderer->draw(view, projection, camera->getPosition());
+    gizmoRenderer->draw(view, projection, volumeRenderer->volumeScale);
     uiManager->drawInspector(this, this->glfwManager);
     uiManager->render();
     glfwManager->showFPS(this->window);
     glfwManager->update();
+}
+
+void Application::setVolume(Volume* newVolume) { 
+    delete volume; 
+    volume = newVolume; 
 }
 
 void Application::cleanup() {
@@ -86,6 +95,8 @@ void Application::cleanup() {
     volume = nullptr;
     delete camera;
     camera = nullptr;
+    delete gizmoRenderer;
+    gizmoRenderer = nullptr;
 }
 
 void Application::handleKeyboardEvents(float deltaTime){

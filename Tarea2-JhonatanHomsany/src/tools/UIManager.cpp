@@ -1,5 +1,6 @@
 #include "../../include/Application.h"
 #include "../../include/VolumeRenderer.h"
+#include "../../include/GizmoRenderer.h"
 #include "../../include/Volume.h"
 #include "../../include/tools/UIManager.h"
 #include "../../include/tools/GLFWManager.h"
@@ -31,17 +32,63 @@ void UIManager::addInstructionsUI(){
 
 void UIManager::addFileManagementUI(Application* app){
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Cargar/guardar volumen");
+    ImGui::NewLine();
+    ImGui::Text("Dimensiones del volumen");
+    ImGui::InputInt("X", &dimX);
+    ImGui::InputInt("Y", &dimY);
+    ImGui::InputInt("Z", &dimZ);
     ImGui::Separator();
+    
     if (ImGui::Button("Cargar volumen")) {
-        std::string path = app->fileManager->getFilePath();
-        if (!path.empty()) {
-            app->setVolume(new Volume(app->fileManager->readVolume(path)));
-            app->volumeRenderer->uploadVolume(*app->volume);
+        if(app->volume){
+            string path = app->fileManager->getFilePath();
+            if (!path.empty()) {
+                app->setVolume(new Volume(app->fileManager->readVolume(path, dimX, dimY, dimZ)));
+                app->volumeRenderer->uploadVolume(*app->volume);
+            }
+        }
+    }
+
+    if(ImGui::Button("Guardar volumen")){
+        string path = app->fileManager->getSavePath();
+        if(!path.empty()){
+            app->fileManager->saveRawFile(path, app->volume);
         }
     }
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
+}
+
+void UIManager::addOpacityManagementUI(Application* app){
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Función de transferencia");
+    ImGui::NewLine();
+    ImGui::SliderFloat("Gas", &app->volumeRenderer->gasOpacityScale, 0.0f, 1.0f);
+    ImGui::SliderFloat("Liquido", &app->volumeRenderer->liquidOpacityScale, 0.0f, 1.0f);
+    ImGui::SliderFloat("Objetos", &app->volumeRenderer->objectsOpacityScale, 0.0f, 1.0f);
+    ImGui::SliderFloat("Terreno", &app->volumeRenderer->terrainOpacityScale, 0.0f, 1.0f);
+    ImGui::Spacing();
+    ImGui::DragFloatRange2("Rango de densidad", &app->volumeRenderer->densityMin, &app->volumeRenderer->densityMax, 0.005f, 0.0f, 1.0f);
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+}
+
+void UIManager::addVoxelSizeUI(Application* app){
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tamaño de los voxeles");
+    ImGui::Separator();
+    ImGui::InputFloat("Tamaño de los voxeles", &app->volumeRenderer->voxelSize);
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+}
+
+void UIManager::addGizmoControlsUI(Application* app){
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Controles del gizmo");
+    ImGui::Separator();
+    ImGui::Checkbox("Mostrar ejes", &app->gizmoRenderer->showAxis);
+    ImGui::Checkbox("Mostrar caja", &app->gizmoRenderer->showBoundingBox);
 }
 
 UIManager::UIManager(GLFWwindow* window) {
@@ -71,6 +118,9 @@ void UIManager::drawInspector(Application* app, GLFWManager* glfwManager) {
     addFrameLimitUI(glfwManager);
     addInstructionsUI();
     addFileManagementUI(app);
+    addOpacityManagementUI(app);
+    addVoxelSizeUI(app);
+    addGizmoControlsUI(app);
     ImGui::End();
 }
 

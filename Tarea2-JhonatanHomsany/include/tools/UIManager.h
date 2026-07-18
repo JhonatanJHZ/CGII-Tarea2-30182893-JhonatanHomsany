@@ -11,9 +11,14 @@ class GLFWManager;
 
 class UIManager {
     private:
+        int dimX = 512, dimY = 128, dimZ = 512;
         void addFrameLimitUI(GLFWManager* glfwManager);
         void addInstructionsUI();
         void addFileManagementUI(Application* app);
+        void addOpacityManagementUI(Application* app);
+        void addVoxelSizeUI(Application* app);
+        void addGizmoControlsUI(Application* app);
+
     public:
         UIManager(GLFWwindow* window);
         ~UIManager();

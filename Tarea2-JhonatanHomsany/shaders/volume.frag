@@ -4,45 +4,49 @@ uniform sampler3D volumeTex;
 out vec4 FragColor;
 
 uniform vec3 cameraPosition;
-uniform bool displayGas, displayLiquid, displayObjects, displayTerrain;
+uniform float densityMin;
+uniform float densityMax;
+uniform vec3 volumeScale;
+uniform float gasOpacityScale, liquidOpacityScale, objectsOpacityScale, terrainOpacityScale;
+uniform float voxelSize;
     
 void main()
 {
-    vec3 rayOrigin = localPos;
-    vec3 rayDir = normalize(localPos - cameraPosition);
+    vec3 cameraLocal = cameraPosition / volumeScale;
+    vec3 rayDir = normalize(localPos - cameraLocal);
     vec3 color = vec3(0.0);
-    vec3 ray = rayOrigin;
-    float t_max = 2.0;
-    float stepSize = 1.0 / 256.0;
+    vec3 ray = localPos;
+    float stepSize = (1.0 / 256.0) * voxelSize;
     float transparency = 1.0;
-    const int MAX_STEPS = 512;
+    int maxSteps = min(int(1.8 / stepSize) + 1, 2048);
 
-    for(int i = 0; i < MAX_STEPS; i++) {
+    for(int i = 0; i < maxSteps; i++) {
         if (ray.x < 0.0 || ray.x > 1.0 ||
             ray.y < 0.0 || ray.y > 1.0 ||
             ray.z < 0.0 || ray.z > 1.0) break;
         vec4 voxel = texture(volumeTex, ray);
-        float voxelOpacity = voxel.a;
-        vec3 voxelColor = voxel.rgb;
+        if(voxel.a >= densityMin && voxel.a <= densityMax){
+            float voxelOpacity = voxel.a;
+            vec3 voxelColor = voxel.rgb;
 
-        float alphaValue = voxelOpacity * 255.0;
-        bool visible = true;
+            float alphaValue = voxelOpacity * 255.0;
+            float opacityFactor = 1.0;
 
-        if(alphaValue <= 75){
-            visible = displayGas;
-        }
+            if(alphaValue <= 75){
+                opacityFactor = gasOpacityScale;
+            }
 
-        else if(alphaValue <= 150){
-            visible = displayLiquid;
-        }
-        else if(alphaValue <= 254){
-            visible = displayObjects;
-        }
-        else {
-            visible = displayTerrain;
-        }
+            else if(alphaValue <= 150){
+                opacityFactor = liquidOpacityScale;
+            }
+            else if(alphaValue <= 254){
+                opacityFactor = objectsOpacityScale;
+            }
+            else {
+                opacityFactor = terrainOpacityScale;
+            }
 
-        if(visible){
+            voxelOpacity *= opacityFactor;
             color += transparency * voxelOpacity * voxelColor; 
             transparency *= (1.0 - voxelOpacity);
             if (transparency < 0.1) break;

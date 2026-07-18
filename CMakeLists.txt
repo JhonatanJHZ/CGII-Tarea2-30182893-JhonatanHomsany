@@ -18,6 +18,7 @@ add_executable(Tarea2
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/GLFWManager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Volume.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/VolumeRenderer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/GizmoRenderer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/Shader.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/UIManager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tarea2-JhonatanHomsany/src/tools/FileManager.cpp"
