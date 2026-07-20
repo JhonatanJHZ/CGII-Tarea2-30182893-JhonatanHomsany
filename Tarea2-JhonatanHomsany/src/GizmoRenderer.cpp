@@ -7,7 +7,7 @@ using namespace std;
 
 GizmoRenderer::GizmoRenderer()
     : shader(nullptr), VAO(0), VBO(0),
-      showAxis(true), showBoundingBox(true) {};
+      showAxis(false), showBoundingBox(false) {};
       
 GizmoRenderer::~GizmoRenderer(){
     cleanup();
@@ -55,6 +55,7 @@ void GizmoRenderer::draw(const glm::mat4& view, const glm::mat4& projection, con
     glLineWidth(5.0f);
     glBindVertexArray(VAO);
 
+    glDisable(GL_DEPTH_TEST);
     if (showAxis) {
         glm::vec3 center = volumeScale * 0.5f;          
         float axisLen = 2.0f;                           
@@ -62,14 +63,14 @@ void GizmoRenderer::draw(const glm::mat4& view, const glm::mat4& projection, con
         shader->setMat4("model", axisModel);
         glDrawArrays(GL_LINES, 0, 6);
     }
-
+    
+    glEnable(GL_DEPTH_TEST);
     if (showBoundingBox) {
         glm::mat4 boxModel = glm::scale(glm::mat4(1.0f), volumeScale);
         shader->setMat4("model", boxModel);
         glDrawArrays(GL_LINES, 6, 24);
     }
     glBindVertexArray(0);
-    glEnable(GL_DEPTH_TEST);
 };
 
 void GizmoRenderer::cleanup(){

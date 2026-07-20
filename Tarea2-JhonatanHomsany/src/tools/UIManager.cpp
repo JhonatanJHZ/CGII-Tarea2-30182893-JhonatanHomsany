@@ -91,6 +91,33 @@ void UIManager::addGizmoControlsUI(Application* app){
     ImGui::Checkbox("Mostrar caja", &app->gizmoRenderer->showBoundingBox);
 }
 
+void UIManager::addInsertObjectUI(Application* app){
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Insertar objeto");
+    ImGui::Separator();    
+
+    ImGui::Text("Dimensiones del objeto");
+    ImGui::InputInt("Dim X", &objectDimensionsX);
+    ImGui::InputInt("Dim Y", &objectDimensionsY);
+    ImGui::InputInt("Dim Z", &objectDimensionsZ);
+
+    ImGui::Text("Posición del objeto");
+    ImGui::InputInt("Pos X", &positionX);
+    ImGui::InputInt("Pos Y", &positionY);
+    ImGui::InputInt("Pos Z", &positionZ);
+ 
+    ImGui::ColorEdit3("Color del objeto", color);
+    if(ImGui::Button("Insertar objeto")){
+        if(app->volume){
+            string path = app->fileManager->getFilePath();
+            if (!path.empty()) {
+                Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ)); 
+                app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, glm::vec3 (color[0], color[1], color[2]));
+                app->volumeRenderer->uploadVolume(*app->volume);
+            }
+        }
+    }
+}
+
 UIManager::UIManager(GLFWwindow* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -121,6 +148,7 @@ void UIManager::drawInspector(Application* app, GLFWManager* glfwManager) {
     addOpacityManagementUI(app);
     addVoxelSizeUI(app);
     addGizmoControlsUI(app);
+    addInsertObjectUI(app);
     ImGui::End();
 }
 

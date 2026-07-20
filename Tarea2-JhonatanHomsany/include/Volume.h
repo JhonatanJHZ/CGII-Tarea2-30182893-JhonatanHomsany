@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include<string>
+#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -33,4 +34,6 @@ class Volume{
         void setVoxels(vector<Voxel> voxels){this->voxels = voxels;}
 
         void load(int X, int Y, int Z, vector<Voxel> voxels);
+
+        void insertObject(const Volume& object, int x, int y, int z, glm::vec3 color);
 };
