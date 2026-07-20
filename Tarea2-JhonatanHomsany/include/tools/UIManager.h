@@ -23,6 +23,7 @@ class UIManager {
         void addVoxelSizeUI(Application* app);
         void addGizmoControlsUI(Application* app);
         void addInsertObjectUI(Application* app);
+        void addStoneburnerUI(Application* app);
 
     public:
         UIManager(GLFWwindow* window);

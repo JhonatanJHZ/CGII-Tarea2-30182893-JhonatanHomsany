@@ -30,7 +30,8 @@ class Volume{
         void setY(int y){Y = y;}
         void setZ(int z){Z = z;}
 
-        const vector<Voxel>& getVoxels() const {return voxels;}
+        vector<Voxel>& getVoxels() { return voxels; }
+        const vector<Voxel>& getVoxels() const { return voxels; }
         void setVoxels(vector<Voxel> voxels){this->voxels = voxels;}
 
         void load(int X, int Y, int Z, vector<Voxel> voxels);

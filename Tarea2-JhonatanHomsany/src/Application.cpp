@@ -5,6 +5,7 @@
 #include "../include/Volume.h"
 #include "../include/VolumeRenderer.h"
 #include "../include/GizmoRenderer.h"
+#include "../include/tools/StoneburnerManager.h"
 #include "../include/Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,7 +18,7 @@
 #include <string>
 
 Application::Application()
-    : window(nullptr), glfwManager(nullptr), uiManager(nullptr), fileManager(nullptr), volume(nullptr), volumeRenderer(nullptr), camera(nullptr), gizmoRenderer(nullptr) {}
+    : window(nullptr), glfwManager(nullptr), uiManager(nullptr), fileManager(nullptr), volume(nullptr), volumeRenderer(nullptr), camera(nullptr), gizmoRenderer(nullptr), stoneburner(nullptr) {}
 Application::~Application() {
     cleanup();
 }
@@ -39,6 +40,7 @@ bool Application::init() {
     volumeRenderer->uploadVolume(*volume);
     gizmoRenderer = new GizmoRenderer();
     gizmoRenderer->init();
+    stoneburner = new StoneburnerManager();
     return true;
 }
 
@@ -97,6 +99,8 @@ void Application::cleanup() {
     camera = nullptr;
     delete gizmoRenderer;
     gizmoRenderer = nullptr;
+    delete stoneburner;
+    stoneburner = nullptr;
 }
 
 void Application::handleKeyboardEvents(float deltaTime){

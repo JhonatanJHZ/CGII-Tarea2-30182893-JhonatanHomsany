@@ -3,6 +3,7 @@
 #include "../../include/GizmoRenderer.h"
 #include "../../include/Volume.h"
 #include "../../include/tools/UIManager.h"
+#include "../../include/tools/StoneburnerManager.h"
 #include "../../include/tools/GLFWManager.h"
 #include "../../include/tools/tinyfiledialogs.h"
 #include "../../include/tools/FileManager.h"
@@ -118,6 +119,21 @@ void UIManager::addInsertObjectUI(Application* app){
     }
 }
 
+void UIManager::addStoneburnerUI(Application* app){
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Modo Stoneburner");
+    ImGui::Separator();   
+    ImGui::Checkbox("Modo stoneburner", &app->stoneburner->active);
+    ImGui::InputInt("Centro X", &app->stoneburner->selectedVoxelX);
+    ImGui::InputInt("Centro Y", &app->stoneburner->selectedVoxelY);
+    ImGui::InputInt("Centro Z", &app->stoneburner->selectedVoxelZ);
+    ImGui::InputInt("Radio", &app->stoneburner->actionRadius);
+    ImGui::DragFloatRange2("Rango alfa", &app->stoneburner->alphaLowerLimit, &app->stoneburner->alphaUpperLimit, 0.005f, 0.0f, 1.0f);
+    if (ImGui::Button("Ejecutar")) {
+        app->stoneburner->destructVoxels(app->volume);
+        app->volumeRenderer->uploadVolume(*app->volume);
+    }
+}
+
 UIManager::UIManager(GLFWwindow* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -149,6 +165,7 @@ void UIManager::drawInspector(Application* app, GLFWManager* glfwManager) {
     addVoxelSizeUI(app);
     addGizmoControlsUI(app);
     addInsertObjectUI(app);
+    addStoneburnerUI(app);
     ImGui::End();
 }
 

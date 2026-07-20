@@ -12,6 +12,7 @@ class Shader;
 class VolumeRenderer;
 class Camera;
 class GizmoRenderer;
+class StoneburnerManager;
 
 using namespace std;
 
@@ -25,6 +26,7 @@ public:
     VolumeRenderer* volumeRenderer;
     Camera* camera;
     GizmoRenderer* gizmoRenderer;
+    StoneburnerManager* stoneburner;
 
     bool init();
     void updateAndRender();
