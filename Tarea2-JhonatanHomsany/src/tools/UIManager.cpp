@@ -96,6 +96,10 @@ void UIManager::addInsertObjectUI(Application* app){
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Insertar objeto");
     ImGui::Separator();    
 
+    static int depthIndex = 2;                       
+    ImGui::Combo("Profundidad", &depthIndex, "8 bits\0" "16 bits\0" "32 bits\0");
+    int bitDepth = (depthIndex == 0) ? 8 : (depthIndex == 1) ? 16 : 32;
+
     ImGui::Text("Dimensiones del objeto");
     ImGui::InputInt("Dim X", &objectDimensionsX);
     ImGui::InputInt("Dim Y", &objectDimensionsY);
@@ -111,7 +115,7 @@ void UIManager::addInsertObjectUI(Application* app){
         if(app->volume){
             string path = app->fileManager->getFilePath();
             if (!path.empty()) {
-                Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ)); 
+                Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ, bitDepth)); 
                 app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, glm::vec3 (color[0], color[1], color[2]));
                 app->volumeRenderer->uploadVolume(*app->volume);
             }
@@ -123,6 +127,7 @@ void UIManager::addStoneburnerUI(Application* app){
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Modo Stoneburner");
     ImGui::Separator();   
     ImGui::Checkbox("Modo stoneburner", &app->stoneburner->active);
+    ImGui::SliderFloat("Umbral de selección", &app->stoneburner->pickThreshold, 0.0f, 1.0f);
     ImGui::InputInt("Centro X", &app->stoneburner->selectedVoxelX);
     ImGui::InputInt("Centro Y", &app->stoneburner->selectedVoxelY);
     ImGui::InputInt("Centro Z", &app->stoneburner->selectedVoxelZ);

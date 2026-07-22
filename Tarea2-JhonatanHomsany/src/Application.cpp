@@ -139,6 +139,27 @@ void Application::handleMouseEvents(){
         camera->zoom(io.MouseWheel);
     }
 
+    static bool leftWasDown = false;
+    bool leftIsDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+    if (stoneburner->active && volume && !io.WantCaptureMouse && leftIsDown && !leftWasDown) {
+        double mx, my;
+        glfwGetCursorPos(this->window, &mx, &my);
+
+        int w, h;
+        glfwManager->getFrameBufferSize(&w, &h);
+        if (h == 0) h = 1;
+
+        glm::mat4 view = camera->getViewMatrix();
+        glm::mat4 proj = camera->getProjectionMatrix((float)w / (float)h);
+
+        if (stoneburner->pick(mx, my, w, h, view, proj, volumeRenderer->volumeScale, *volume)) {
+            stoneburner->destructVoxels(volume);
+            volumeRenderer->uploadVolume(*volume);
+        }
+    }
+    leftWasDown = leftIsDown;
+
     if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS || (glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)) {
         if (!isMouseCaptured) {
             glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

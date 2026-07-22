@@ -33,7 +33,7 @@ string FileManager::getFilePath(){
     return "";
 }
 
-Volume FileManager::readVolume(const string& filePath, int x, int y, int z){
+Volume FileManager::readVolume(const string& filePath, int x, int y, int z, int bitDepth){
     size_t dotPosition = filePath.rfind('.');
     string fileName, fileExtension;
     Volume volume;
@@ -50,7 +50,7 @@ Volume FileManager::readVolume(const string& filePath, int x, int y, int z){
     string name = filePath.substr(filePath.find_last_of("/\\") + 1);
 
     if(fileExtension == "raw"){
-        voxels = readRawFile(filePath);
+        voxels = readRawFile(filePath, bitDepth);
 
     }
     else if(fileExtension == "nrrd"){
@@ -68,7 +68,7 @@ Volume FileManager::readVolume(const string& filePath, int x, int y, int z){
     return volume;
 }
 
-vector<Voxel> FileManager::readRawFile(const string& filePath){
+vector<Voxel> FileManager::readRawFile(const string& filePath, int bitDepth){
     ifstream rawFile(filePath, ios::binary | ios::in);
 
     if(!rawFile.is_open()){
@@ -82,16 +82,34 @@ vector<Voxel> FileManager::readRawFile(const string& filePath){
 
     vector<unsigned char> bytes(size);
     rawFile.read(reinterpret_cast<char*>(bytes.data()), size);
-
     rawFile.close();
-    vector<Voxel> fileVoxels;
-    Voxel v;
 
-    for(int i = 0; i + 3 < bytes.size(); i += 4){
-        v.R = static_cast<int>(bytes[i]);
-        v.G = static_cast<int>(bytes[i+1]);
-        v.B = static_cast<int>(bytes[i+2]);
-        v.A = static_cast<int>(bytes[i+3]);
+    int bytesPerVoxel = bitDepth / 8;                    // 8→1, 16→2, 32→4
+    if (bytesPerVoxel != 1 && bytesPerVoxel != 2 && bytesPerVoxel != 4) {
+        cout << "Profundidad no soportada: " << bitDepth << " bits" << endl;
+        return {};
+    }
+
+    vector<Voxel> fileVoxels;
+    fileVoxels.reserve(bytes.size() / bytesPerVoxel);
+
+    for (size_t i = 0; i + bytesPerVoxel <= bytes.size(); i += bytesPerVoxel) {
+        Voxel v;
+        if (bytesPerVoxel == 4) {                        
+            v.R = bytes[i];
+            v.G = bytes[i + 1];
+            v.B = bytes[i + 2];
+            v.A = bytes[i + 3];
+        }
+        else if (bytesPerVoxel == 2) {                   
+            uint16_t value = (uint16_t)(bytes[i] | (bytes[i + 1] << 8));  
+            v.R = v.G = v.B = 255;                       
+            v.A = (uint8_t)(value >> 8);                 
+        }
+        else {                                           
+            v.R = v.G = v.B = 255;                      
+            v.A = bytes[i];
+        }
         fileVoxels.push_back(v);
     }
 
