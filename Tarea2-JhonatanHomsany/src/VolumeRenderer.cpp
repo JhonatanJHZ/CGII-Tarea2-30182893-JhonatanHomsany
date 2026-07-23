@@ -5,6 +5,8 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
+#include <random>
+#include <iostream>
 using namespace std;
 
 VolumeRenderer::VolumeRenderer()
@@ -96,6 +98,85 @@ void VolumeRenderer::draw(const glm::mat4& view, const glm::mat4& projection, co
     glBindVertexArray(0);
 };
 
+void VolumeRenderer::generateProceduralVolume(Volume* volume) {
+    if (!volume) return;
+
+    srand(static_cast<unsigned int>(std::time(nullptr)));
+    int seed = rand();
+
+    int X = volume->getX(), Y = volume->getY(), Z = volume->getZ();
+    std::vector<Voxel> voxels(X * Y * Z);
+
+    int waterLevel = Y / 3;
+    float frequency = 0.02f;
+
+    for (int z = 0; z < Z; z++) {
+        for (int x = 0; x < X; x++) {
+            float value = generateNoise(x * frequency, z * frequency, seed);
+            int height = (int)(Y * 0.3f + value * (Y * 0.4f));
+            height = std::min(std::max(height, 1), Y - 1);
+
+            float tint = generateNoise(x * 0.1f, z * 0.1f, seed + 999);
+            uint8_t grassG = (uint8_t)(120 + tint * 50);          
+
+            for (int y = 0; y < Y; y++) {
+                Voxel v = {0, 0, 0, 0};                           
+                if (y < height) {
+                    int depth = height - y;                       
+                    if (depth <= 2) {
+                        if (height <= waterLevel + 2)
+                            v = {194, 178, 128, 255};             
+                        else
+                            v = {70, grassG, 55, 255};            
+                    } else {
+                        v = {134, 96, 67, 255};                    
+                    }
+                } else if (y < waterLevel) {
+                    v = {40, 90, 200, (uint8_t)(76 + rand() % 75)};
+                }
+                voxels[x + y*X + z*X*Y] = v;
+            }
+        }
+    }
+
+    int numDeposits = 12;
+    for (int d = 0; d < numDeposits; d++) {
+        int ox = rand() % X, oz = rand() % Z;
+        float value = generateNoise(ox * frequency, oz * frequency, seed);
+        int surf = std::min(std::max((int)(Y * 0.3f + value * (Y * 0.4f)), 1), Y - 1);
+        int oy = surf;
+        int r = 3 + rand() % 4;
+        Voxel objectVoxel = {200, 120, 40, (uint8_t)(151 + rand() % 104)};
+        for (int y = oy - r; y <= oy + r; y++)
+            for (int z = oz - r; z <= oz + r; z++)
+                for (int x = ox - r; x <= ox + r; x++) {
+                    if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) continue;
+                    int dx = x-ox, dy = y-oy, dz = z-oz;
+                    if (dx*dx + dy*dy + dz*dz > r*r) continue;
+                    voxels[x + y*X + z*X*Y] = objectVoxel;
+                }
+    }
+
+    int numClouds = 8;
+    for (int c = 0; c < numClouds; c++) {
+        int cx = rand() % X, cz = rand() % Z;
+        int cy = waterLevel + Y/4 + rand() % (Y/4);
+        int r = 8 + rand() % 12;
+        for (int y = cy - r; y <= cy + r; y++)
+            for (int z = cz - r; z <= cz + r; z++)
+                for (int x = cx - r; x <= cx + r; x++) {
+                    if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) continue;
+                    int dx = x-cx, dy = y-cy, dz = z-cz;
+                    if (dx*dx + dy*dy + dz*dz > r*r) continue;
+                    int idx = x + y*X + z*X*Y;
+                    if (voxels[idx].A == 0)
+                        voxels[idx] = {230, 230, 235, (uint8_t)(1 + rand() % 75)};
+                }
+    }
+
+    volume->load(X, Y, Z, std::move(voxels));
+}
+
 void VolumeRenderer::cleanup(){
     delete shader;
     shader = nullptr;
@@ -103,3 +184,39 @@ void VolumeRenderer::cleanup(){
     glDeleteBuffers(1, &VBO);
     glDeleteTextures(1, &textureID);
 };
+
+float VolumeRenderer::linearInterpolation(float a, float b, float t){
+    return a + t * (b-a);
+};
+
+float VolumeRenderer::fade(float t){
+    return t * t * (3.0f-2.0f*t);
+};
+
+float VolumeRenderer::generateNoise(float x, float y, int seed){
+    int x0 = (int) x;
+    int x1 = x0 + 1;
+    int y0 = (int) y;
+    int y1 = y0 + 1;
+
+    float fractionalPointX = x - x0;
+    float fractionalPointY = y - y0;
+
+    float r00 = this->randomAt(x0, y0, seed), r10 = this->randomAt(x1, y0, seed);
+    float r01 = this->randomAt(x0, y1, seed), r11 = this->randomAt(x1, y1, seed);
+    
+    float u = fade(fractionalPointX);
+    float v = fade(fractionalPointY);
+
+    float bottom = linearInterpolation(r00, r10, u);
+    float top    = linearInterpolation(r01, r11, u);
+    float result = linearInterpolation(bottom, top, v);
+
+    return result;
+}
+
+float VolumeRenderer::randomAt(int i, int j, int seed) {
+    int n = i * 374761393 + j * 668265263 + seed * 1013904223;
+    n = (n ^ (n >> 13)) * 1274126177;
+    return (n & 0x7fffffff) / (float)0x7fffffff;
+}

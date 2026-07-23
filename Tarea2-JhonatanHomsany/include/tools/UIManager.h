@@ -24,6 +24,7 @@ class UIManager {
         void addGizmoControlsUI(Application* app);
         void addInsertObjectUI(Application* app);
         void addStoneburnerUI(Application* app);
+        void addProceduralGenerationUI(Application* app);
 
     public:
         UIManager(GLFWwindow* window);

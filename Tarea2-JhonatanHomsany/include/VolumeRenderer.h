@@ -5,9 +5,14 @@ class Shader;
 
 class VolumeRenderer{
     private:
-    unsigned int VAO, VBO;
-    unsigned int textureID;
-    Shader* shader;
+        unsigned int VAO, VBO;
+        unsigned int textureID;
+        Shader* shader;
+
+        float linearInterpolation(float a, float b, float t);
+        float fade(float t);
+        float generateNoise(float x, float y, int seed);
+        float randomAt(int i, int j, int seed);
     
     public:
         glm::vec3 volumeScale;
@@ -24,5 +29,6 @@ class VolumeRenderer{
         void init();
         void uploadVolume(const Volume& volume);
         void draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos);
+        void generateProceduralVolume(Volume* volume);
         void cleanup();
 };

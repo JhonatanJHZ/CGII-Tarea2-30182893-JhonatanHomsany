@@ -32,110 +32,123 @@ void UIManager::addInstructionsUI(){
 }
 
 void UIManager::addFileManagementUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Cargar/guardar volumen");
-    ImGui::NewLine();
-    ImGui::Text("Dimensiones del volumen");
-    ImGui::InputInt("X", &dimX);
-    ImGui::InputInt("Y", &dimY);
-    ImGui::InputInt("Z", &dimZ);
-    ImGui::Separator();
-    
-    if (ImGui::Button("Cargar volumen")) {
-        if(app->volume){
-            string path = app->fileManager->getFilePath();
-            if (!path.empty()) {
-                app->setVolume(new Volume(app->fileManager->readVolume(path, dimX, dimY, dimZ)));
-                app->volumeRenderer->uploadVolume(*app->volume);
+    if (ImGui::CollapsingHeader("Manejo de archivos")){
+        ImGui::Text("Dimensiones del volumen");
+        ImGui::InputInt("X", &dimX);
+        ImGui::InputInt("Y", &dimY);
+        ImGui::InputInt("Z", &dimZ);
+        ImGui::Separator();
+        
+        if (ImGui::Button("Cargar volumen")) {
+            if(app->volume){
+                string path = app->fileManager->getFilePath();
+                if (!path.empty()) {
+                    app->setVolume(new Volume(app->fileManager->readVolume(path, dimX, dimY, dimZ)));
+                    app->volumeRenderer->uploadVolume(*app->volume);
+                }
             }
         }
-    }
-
-    if(ImGui::Button("Guardar volumen")){
-        string path = app->fileManager->getSavePath();
-        if(!path.empty()){
-            app->fileManager->saveRawFile(path, app->volume);
+    
+        if(ImGui::Button("Guardar volumen")){
+            string path = app->fileManager->getSavePath();
+            if(!path.empty()){
+                app->fileManager->saveRawFile(path, app->volume);
+            }
         }
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
     }
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
 }
 
 void UIManager::addOpacityManagementUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Función de transferencia");
-    ImGui::NewLine();
-    ImGui::SliderFloat("Gas", &app->volumeRenderer->gasOpacityScale, 0.0f, 1.0f);
-    ImGui::SliderFloat("Liquido", &app->volumeRenderer->liquidOpacityScale, 0.0f, 1.0f);
-    ImGui::SliderFloat("Objetos", &app->volumeRenderer->objectsOpacityScale, 0.0f, 1.0f);
-    ImGui::SliderFloat("Terreno", &app->volumeRenderer->terrainOpacityScale, 0.0f, 1.0f);
-    ImGui::Spacing();
-    ImGui::DragFloatRange2("Rango de densidad", &app->volumeRenderer->densityMin, &app->volumeRenderer->densityMax, 0.005f, 0.0f, 1.0f);
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("Función de transferncia")){
+        ImGui::SliderFloat("Gas", &app->volumeRenderer->gasOpacityScale, 0.0f, 1.0f);
+        ImGui::SliderFloat("Liquido", &app->volumeRenderer->liquidOpacityScale, 0.0f, 1.0f);
+        ImGui::SliderFloat("Objetos", &app->volumeRenderer->objectsOpacityScale, 0.0f, 1.0f);
+        ImGui::SliderFloat("Terreno", &app->volumeRenderer->terrainOpacityScale, 0.0f, 1.0f);
+        ImGui::Spacing();
+        ImGui::DragFloatRange2("Rango de densidad", &app->volumeRenderer->densityMin, &app->volumeRenderer->densityMax, 0.005f, 0.0f, 1.0f);
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+    }
 }
 
 void UIManager::addVoxelSizeUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tamaño de los voxeles");
-    ImGui::Separator();
-    ImGui::InputFloat("Tamaño de los voxeles", &app->volumeRenderer->voxelSize);
+    if (ImGui::CollapsingHeader("Controles de los voxeles")){
+        ImGui::Separator();
+        ImGui::InputFloat("Tamaño de los voxeles", &app->volumeRenderer->voxelSize);
 
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+    }
 }
 
 void UIManager::addGizmoControlsUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Controles del gizmo");
-    ImGui::Separator();
-    ImGui::Checkbox("Mostrar ejes", &app->gizmoRenderer->showAxis);
-    ImGui::Checkbox("Mostrar caja", &app->gizmoRenderer->showBoundingBox);
+    if (ImGui::CollapsingHeader("Gizmo")){
+        ImGui::Separator();
+        ImGui::Checkbox("Mostrar ejes", &app->gizmoRenderer->showAxis);
+        ImGui::Checkbox("Mostrar caja", &app->gizmoRenderer->showBoundingBox);
+    }
 }
 
 void UIManager::addInsertObjectUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Insertar objeto");
-    ImGui::Separator();    
+    if (ImGui::CollapsingHeader("Inserción de objetos")){
+        ImGui::Separator();    
 
-    static int depthIndex = 2;                       
-    ImGui::Combo("Profundidad", &depthIndex, "8 bits\0" "16 bits\0" "32 bits\0");
-    int bitDepth = (depthIndex == 0) ? 8 : (depthIndex == 1) ? 16 : 32;
+        static int depthIndex = 2;                       
+        ImGui::Combo("Profundidad", &depthIndex, "8 bits\0" "16 bits\0" "32 bits\0");
+        int bitDepth = (depthIndex == 0) ? 8 : (depthIndex == 1) ? 16 : 32;
 
-    ImGui::Text("Dimensiones del objeto");
-    ImGui::InputInt("Dim X", &objectDimensionsX);
-    ImGui::InputInt("Dim Y", &objectDimensionsY);
-    ImGui::InputInt("Dim Z", &objectDimensionsZ);
+        ImGui::Text("Dimensiones del objeto");
+        ImGui::InputInt("Dim X", &objectDimensionsX);
+        ImGui::InputInt("Dim Y", &objectDimensionsY);
+        ImGui::InputInt("Dim Z", &objectDimensionsZ);
 
-    ImGui::Text("Posición del objeto");
-    ImGui::InputInt("Pos X", &positionX);
-    ImGui::InputInt("Pos Y", &positionY);
-    ImGui::InputInt("Pos Z", &positionZ);
- 
-    ImGui::ColorEdit3("Color del objeto", color);
-    if(ImGui::Button("Insertar objeto")){
-        if(app->volume){
-            string path = app->fileManager->getFilePath();
-            if (!path.empty()) {
-                Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ, bitDepth)); 
-                app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, glm::vec3 (color[0], color[1], color[2]));
-                app->volumeRenderer->uploadVolume(*app->volume);
+        ImGui::Text("Posición del objeto");
+        ImGui::InputInt("Pos X", &positionX);
+        ImGui::InputInt("Pos Y", &positionY);
+        ImGui::InputInt("Pos Z", &positionZ);
+    
+        ImGui::ColorEdit3("Color del objeto", color);
+        if(ImGui::Button("Insertar objeto")){
+            if(app->volume){
+                string path = app->fileManager->getFilePath();
+                if (!path.empty()) {
+                    Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ, bitDepth)); 
+                    app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, glm::vec3 (color[0], color[1], color[2]));
+                    app->volumeRenderer->uploadVolume(*app->volume);
+                }
             }
         }
     }
 }
 
 void UIManager::addStoneburnerUI(Application* app){
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Modo Stoneburner");
-    ImGui::Separator();   
-    ImGui::Checkbox("Modo stoneburner", &app->stoneburner->active);
-    ImGui::SliderFloat("Umbral de selección", &app->stoneburner->pickThreshold, 0.0f, 1.0f);
-    ImGui::InputInt("Centro X", &app->stoneburner->selectedVoxelX);
-    ImGui::InputInt("Centro Y", &app->stoneburner->selectedVoxelY);
-    ImGui::InputInt("Centro Z", &app->stoneburner->selectedVoxelZ);
-    ImGui::InputInt("Radio", &app->stoneburner->actionRadius);
-    ImGui::DragFloatRange2("Rango alfa", &app->stoneburner->alphaLowerLimit, &app->stoneburner->alphaUpperLimit, 0.005f, 0.0f, 1.0f);
-    if (ImGui::Button("Ejecutar")) {
-        app->stoneburner->destructVoxels(app->volume);
-        app->volumeRenderer->uploadVolume(*app->volume);
+    if (ImGui::CollapsingHeader("Stoneburner")){        
+        ImGui::Separator();   
+        ImGui::Checkbox("Modo stoneburner", &app->stoneburner->active);
+        ImGui::SliderFloat("Umbral de selección", &app->stoneburner->pickThreshold, 0.0f, 1.0f);
+        ImGui::InputInt("Centro X", &app->stoneburner->selectedVoxelX);
+        ImGui::InputInt("Centro Y", &app->stoneburner->selectedVoxelY);
+        ImGui::InputInt("Centro Z", &app->stoneburner->selectedVoxelZ);
+        ImGui::InputInt("Radio", &app->stoneburner->actionRadius);
+        ImGui::DragFloatRange2("Rango alfa", &app->stoneburner->alphaLowerLimit, &app->stoneburner->alphaUpperLimit, 0.005f, 0.0f, 1.0f);
+        if (ImGui::Button("Ejecutar")) {
+            app->stoneburner->destructVoxels(app->volume);
+            app->volumeRenderer->uploadVolume(*app->volume);
+        }
+    }
+}
+
+void UIManager::addProceduralGenerationUI(Application* app){
+    if (ImGui::CollapsingHeader("Generar escena")){
+        if (ImGui::Button("Generar escena procedural")) {
+            app->volumeRenderer->generateProceduralVolume(app->volume);
+            app->volumeRenderer->uploadVolume(*app->volume);
+        }
     }
 }
 
@@ -171,6 +184,7 @@ void UIManager::drawInspector(Application* app, GLFWManager* glfwManager) {
     addGizmoControlsUI(app);
     addInsertObjectUI(app);
     addStoneburnerUI(app);
+    addProceduralGenerationUI(app);
     ImGui::End();
 }
 
