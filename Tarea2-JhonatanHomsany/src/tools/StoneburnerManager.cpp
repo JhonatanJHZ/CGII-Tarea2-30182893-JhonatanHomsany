@@ -7,7 +7,7 @@
 using namespace std;
 
 StoneburnerManager::StoneburnerManager()
-    : actionRadius(0), alphaLowerLimit(0.0f), alphaUpperLimit(1.0f), active(false),
+    : actionRadius(40), alphaLowerLimit(0.0f), alphaUpperLimit(255.0f), active(false),
       selectedVoxelX(0), selectedVoxelY(0), selectedVoxelZ(0), clickRayOrigin({0,0,0}), clickRayDirection({0,0,0}), t_max(0) {}
 
 StoneburnerManager::~StoneburnerManager() {
@@ -23,23 +23,28 @@ void StoneburnerManager::destructVoxels(Volume* volume) {
     if (!volume) return;
     int X = volume->getX(), Y = volume->getY(), Z = volume->getZ();
     vector<Voxel>& voxels = volume->getVoxels();
-    int destroyed = 0;
     int r = actionRadius;
 
-    for (int y = 0; y < Y; y++) {                                   
-        for (int z = selectedVoxelZ - r; z <= selectedVoxelZ + r; z++) {  
+    if (!followRayDirection) {
+        for (int y = 0; y < Y; y++)
+          for (int z = selectedVoxelZ - r; z <= selectedVoxelZ + r; z++)
             for (int x = selectedVoxelX - r; x <= selectedVoxelX + r; x++) {
-                if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) continue;
+                if (x<0||x>=X||y<0||y>=Y||z<0||z>=Z) continue;
                 if (!insideRegion(x, y, z)) continue;
                 Voxel& v = voxels[x + y*X + z*X*Y];
-                if (v.A >= alphaLowerLimit * 255 && v.A <= alphaUpperLimit * 255) {
-                    v.A = 0;
-                    destroyed++;                                 
-                }
+                if (v.A >= alphaLowerLimit*255 && v.A <= alphaUpperLimit*255) v.A = 0;
             }
-        }
+    } else {
+        for (int y = 0; y < Y; y++)
+          for (int z = 0; z < Z; z++)
+            for (int x = 0; x < X; x++) {
+                glm::vec3 P(x, y, z);
+                float dist = glm::length(glm::cross(P - rayOriginVoxel, rayDirVoxel));
+                if (dist > r) continue;
+                Voxel& v = voxels[x + y*X + z*X*Y];
+                if (v.A >= alphaLowerLimit*255 && v.A <= alphaUpperLimit*255) v.A = 0;
+            }
     }
-    cout << "Voxeles destruidos: " << destroyed << endl;
 }
 
 
@@ -53,15 +58,21 @@ glm::vec3 getMouseWorldPos(double mouseX, double mouseY, int width, int height, 
 
 bool StoneburnerManager::pick(double mouseX, double mouseY, int width, int height, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& volumeScale, const Volume& volume)
 {
+    int X = volume.getX(), Y = volume.getY(), Z = volume.getZ();
+    const vector<Voxel>& voxels = volume.getVoxels();
+
     clickRayOrigin = getMouseWorldPos(mouseX, mouseY, width, height, view, proj, 0.0f);
     glm::vec3 farPoint = getMouseWorldPos(mouseX, mouseY, width, height, view, proj, 1.0f);
     clickRayDirection = glm::normalize(farPoint - clickRayOrigin);
 
+    glm::vec3 oTex = clickRayOrigin / volumeScale;                       
+    glm::vec3 fTex = (clickRayOrigin + clickRayDirection) / volumeScale;
+    rayOriginVoxel = glm::vec3(oTex.x * X, oTex.y * Y, oTex.z * Z);
+    glm::vec3 fVoxel = glm::vec3(fTex.x * X, fTex.y * Y, fTex.z * Z);
+    rayDirVoxel = glm::normalize(fVoxel - rayOriginVoxel);
+
     glm::vec3 pos    = clickRayOrigin / volumeScale;
     glm::vec3 dirTex = glm::normalize(clickRayDirection / volumeScale);
-
-    int X = volume.getX(), Y = volume.getY(), Z = volume.getZ();
-    const vector<Voxel>& voxels = volume.getVoxels();
 
     float stepSize = 1.0f / 512.0f;
     for (int i = 0; i < 4096; i++) {

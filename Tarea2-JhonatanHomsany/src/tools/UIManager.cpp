@@ -62,13 +62,24 @@ void UIManager::addFileManagementUI(Application* app){
 }
 
 void UIManager::addOpacityManagementUI(Application* app){
-    if (ImGui::CollapsingHeader("Función de transferncia")){
-        ImGui::SliderFloat("Gas", &app->volumeRenderer->gasOpacityScale, 0.0f, 1.0f);
-        ImGui::SliderFloat("Liquido", &app->volumeRenderer->liquidOpacityScale, 0.0f, 1.0f);
-        ImGui::SliderFloat("Objetos", &app->volumeRenderer->objectsOpacityScale, 0.0f, 1.0f);
-        ImGui::SliderFloat("Terreno", &app->volumeRenderer->terrainOpacityScale, 0.0f, 1.0f);
+    VolumeRenderer* applicationRenderer = app->volumeRenderer;
+    if (ImGui::CollapsingHeader("Función de transferencia")){
+
+        ImGui::SliderFloat("Gas (general)", &applicationRenderer->gasOpacityScale, 0.0f, 1.0f);
+        ImGui::DragFloatRange2("Gas (intervalo)", &applicationRenderer->gasOpacityLowerLimit, &applicationRenderer->gasOpacityUpperLimit, 1.0f, 1.0f, 75.0f);
         ImGui::Spacing();
-        ImGui::DragFloatRange2("Rango de densidad", &app->volumeRenderer->densityMin, &app->volumeRenderer->densityMax, 0.005f, 0.0f, 1.0f);
+
+        ImGui::SliderFloat("Líquido (general)", &applicationRenderer->liquidOpacityScale, 0.0f, 1.0f);
+        ImGui::DragFloatRange2("Líquido (intervalo)", &applicationRenderer->liquidOpacityLowerLimit, &applicationRenderer->liquidOpacityUpperLimit, 1.0f, 76.0f, 150.0f);
+        ImGui::Spacing();
+
+        ImGui::SliderFloat("Objetos (general)", &applicationRenderer->objectsOpacityScale, 0.0f, 1.0f);
+        ImGui::DragFloatRange2("Objetos (intervalo)", &applicationRenderer->objectsOpacityLowerLimit, &applicationRenderer->objectsOpacityUpperLimit, 1.0f, 151.0f, 254.0f);
+        ImGui::Spacing();
+
+        ImGui::SliderFloat("Terreno", &applicationRenderer->terrainOpacityScale, 0.0f, 1.0f);
+        ImGui::Spacing();
+        ImGui::DragFloatRange2("Rango de densidad", &applicationRenderer->densityMin, &applicationRenderer->densityMax, 1.0f, 1.0f, 255.0f);
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
@@ -76,9 +87,9 @@ void UIManager::addOpacityManagementUI(Application* app){
 }
 
 void UIManager::addVoxelSizeUI(Application* app){
-    if (ImGui::CollapsingHeader("Controles de los voxeles")){
+    if (ImGui::CollapsingHeader("Controles de los vóxeles")){
         ImGui::Separator();
-        ImGui::InputFloat("Tamaño de los voxeles", &app->volumeRenderer->voxelSize);
+        ImGui::InputFloat("Tamaño de los vóxeles", &app->volumeRenderer->voxelSize);
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -111,6 +122,11 @@ void UIManager::addInsertObjectUI(Application* app){
         ImGui::InputInt("Pos X", &positionX);
         ImGui::InputInt("Pos Y", &positionY);
         ImGui::InputInt("Pos Z", &positionZ);
+
+        ImGui::Text("Escala del objeto");
+        ImGui::InputFloat("Scale X", &scaleX);
+        ImGui::InputFloat("Scale Y", &scaleY);
+        ImGui::InputFloat("Scale Z", &scaleZ);
     
         ImGui::ColorEdit3("Color del objeto", color);
         if(ImGui::Button("Insertar objeto")){
@@ -118,9 +134,49 @@ void UIManager::addInsertObjectUI(Application* app){
                 string path = app->fileManager->getFilePath();
                 if (!path.empty()) {
                     Volume objectToBeInserted = Volume(app->fileManager->readVolume(path, objectDimensionsX, objectDimensionsY, objectDimensionsZ, bitDepth)); 
-                    app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, glm::vec3 (color[0], color[1], color[2]));
+                    app->volume->insertObject(objectToBeInserted, positionX, positionY, positionZ, scaleX, scaleY, scaleZ, glm::vec3 (color[0], color[1], color[2]));
                     app->volumeRenderer->uploadVolume(*app->volume);
                 }
+            }
+        }
+    }
+}
+
+void UIManager::addObjectModificationUI(Application* app){
+    if (ImGui::CollapsingHeader("Modificación de objetos insertados")) {
+        ImGui::Separator();
+
+        auto& objects = app->volume->getObjects();
+
+        if (objects.empty()) {
+            ImGui::Text("No hay objetos insertados.");
+            return;
+        }
+
+        for (int i = 0; i < (int)objects.size(); i++) {
+            std::string label = "Objeto " + std::to_string(i);
+            if (ImGui::Selectable(label.c_str(), selectedObjectIndex == i))
+                selectedObjectIndex = i;
+        }
+
+        if (selectedObjectIndex >= 0 && selectedObjectIndex < (int)objects.size()) {
+            ObjectInstance& o = objects[selectedObjectIndex];
+
+            ImGui::Separator();
+            ImGui::DragFloat3("Posición##mod", &o.position.x, 1.0f);
+            ImGui::DragFloat3("Escala##mod",   &o.scale.x, 0.05f, 0.1f, 8.0f);
+            ImGui::ColorEdit3("Color##mod",    &o.color.x);
+
+            if (ImGui::Button("Modificar objeto")) {
+                app->volume->rebuildWorld();
+                app->volumeRenderer->uploadVolume(*app->volume);
+            }
+
+            if (ImGui::Button("Eliminar objeto")) {
+                objects.erase(objects.begin() + selectedObjectIndex);
+                selectedObjectIndex = -1;
+                app->volume->rebuildWorld();
+                app->volumeRenderer->uploadVolume(*app->volume);
             }
         }
     }
@@ -130,6 +186,7 @@ void UIManager::addStoneburnerUI(Application* app){
     if (ImGui::CollapsingHeader("Stoneburner")){        
         ImGui::Separator();   
         ImGui::Checkbox("Modo stoneburner", &app->stoneburner->active);
+        ImGui::Checkbox("Seguir dirección del rayo", &app->stoneburner->followRayDirection);
         ImGui::SliderFloat("Umbral de selección", &app->stoneburner->pickThreshold, 0.0f, 1.0f);
         ImGui::InputInt("Centro X", &app->stoneburner->selectedVoxelX);
         ImGui::InputInt("Centro Y", &app->stoneburner->selectedVoxelY);
@@ -183,6 +240,9 @@ void UIManager::drawInspector(Application* app, GLFWManager* glfwManager) {
     addVoxelSizeUI(app);
     addGizmoControlsUI(app);
     addInsertObjectUI(app);
+    if(app->volume->getObjects().size() > 0){
+        addObjectModificationUI(app);
+    }
     addStoneburnerUI(app);
     addProceduralGenerationUI(app);
     ImGui::End();

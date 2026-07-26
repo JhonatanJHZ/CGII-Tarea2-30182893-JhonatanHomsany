@@ -5,13 +5,16 @@ class Volume;
 
 class StoneburnerManager {
 public:
-    float pickThreshold = 0.5f;
     int actionRadius;
-    float alphaLowerLimit, alphaUpperLimit;
+    float pickThreshold = 0.5f;
+    float alphaLowerLimit = 1.0f, alphaUpperLimit = 255.0f;
     bool active;
+    bool followRayDirection = false;
     int selectedVoxelX, selectedVoxelY, selectedVoxelZ;
     glm::vec3 clickRayOrigin;
     glm::vec3 clickRayDirection;
+    glm::vec3 rayOriginVoxel;
+    glm::vec3 rayDirVoxel;
     float t_max;
 
     StoneburnerManager();

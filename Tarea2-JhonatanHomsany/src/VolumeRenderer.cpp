@@ -55,6 +55,7 @@ void VolumeRenderer::uploadVolume(const Volume& volume){
     if(volume.getVoxels().empty()){
         return;
     }
+    
     if (textureID == 0){
         glGenTextures(1, &textureID);
     } 
@@ -87,8 +88,14 @@ void VolumeRenderer::draw(const glm::mat4& view, const glm::mat4& projection, co
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
     shader->setFloat("gasOpacityScale", gasOpacityScale);
+    shader->setFloat("gasOpacityLowerLimit", gasOpacityLowerLimit);
+    shader->setFloat("gasOpacityUpperLimit", gasOpacityUpperLimit);
     shader->setFloat("liquidOpacityScale", liquidOpacityScale);
+    shader->setFloat("liquidOpacityLowerLimit", liquidOpacityLowerLimit);
+    shader->setFloat("liquidOpacityUpperLimit", liquidOpacityUpperLimit);
     shader->setFloat("objectsOpacityScale", objectsOpacityScale);
+    shader->setFloat("objectsOpacityLowerLimit", objectsOpacityLowerLimit);
+    shader->setFloat("objectsOpacityUpperLimit", objectsOpacityUpperLimit);
     shader->setFloat("terrainOpacityScale", terrainOpacityScale);
     shader->setFloat("voxelSize", voxelSize);
     shader->setFloat("densityMin", densityMin);

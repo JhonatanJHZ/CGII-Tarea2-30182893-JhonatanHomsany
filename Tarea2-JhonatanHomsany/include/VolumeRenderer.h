@@ -17,12 +17,18 @@ class VolumeRenderer{
     public:
         glm::vec3 volumeScale;
         float gasOpacityScale = 1.0f;
+        float gasOpacityLowerLimit = 1.0f;
+        float gasOpacityUpperLimit = 75.0f;
         float liquidOpacityScale = 1.0f;
+        float liquidOpacityLowerLimit = 76.0f;
+        float liquidOpacityUpperLimit = 150.0f;
         float objectsOpacityScale = 1.0f;
+        float objectsOpacityLowerLimit = 151.0f;
+        float objectsOpacityUpperLimit = 254.0f;
         float terrainOpacityScale = 1.0f;
         float voxelSize = 1.0f;
-        float densityMin = 0.0f;
-        float densityMax = 1.0f;
+        float densityMin = 1.0f;
+        float densityMax = 255.0f;
 
         VolumeRenderer();
         ~VolumeRenderer();

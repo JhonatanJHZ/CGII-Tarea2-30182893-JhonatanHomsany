@@ -59,12 +59,12 @@ Volume FileManager::readVolume(const string& filePath, int x, int y, int z, int 
     }
 
     if(voxels.size() != (size_t)x * y * z){
-        cout << "Error: El archivo no coincide con el tamaño de los voxeles" << endl;
+        cout << "Error: El archivo no coincide con la dimension de los voxeles" << endl;
         return volume;
     }
 
     volume.load(x, y, z, std::move(voxels));
-    cout << "Volumen cargado exitosamente!" << endl;
+    cout << "Volumen cargado exitosamente" << endl;
     return volume;
 }
 

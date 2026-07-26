@@ -8,6 +8,7 @@ uniform float densityMin;
 uniform float densityMax;
 uniform vec3 volumeScale;
 uniform float gasOpacityScale, liquidOpacityScale, objectsOpacityScale, terrainOpacityScale;
+uniform float gasOpacityLowerLimit, gasOpacityUpperLimit, liquidOpacityLowerLimit, liquidOpacityUpperLimit, objectsOpacityLowerLimit, objectsOpacityUpperLimit;
 uniform float voxelSize;
     
 void main()
@@ -25,7 +26,7 @@ void main()
             ray.y < 0.0 || ray.y > 1.0 ||
             ray.z < 0.0 || ray.z > 1.0) break;
         vec4 voxel = texture(volumeTex, ray);
-        if(voxel.a >= densityMin && voxel.a <= densityMax){
+        if(voxel.a * 255 >= densityMin && voxel.a * 255 <= densityMax){
             float voxelOpacity = voxel.a;
             vec3 voxelColor = voxel.rgb;
 
@@ -33,14 +34,29 @@ void main()
             float opacityFactor = 1.0;
 
             if(alphaValue <= 75){
-                opacityFactor = gasOpacityScale;
+                if(alphaValue >= gasOpacityLowerLimit && alphaValue <= gasOpacityUpperLimit){
+                    opacityFactor = gasOpacityScale;
+                }
+                else{
+                    opacityFactor = 0;
+                }
             }
 
             else if(alphaValue <= 150){
-                opacityFactor = liquidOpacityScale;
+                if(alphaValue >= liquidOpacityLowerLimit && alphaValue <= liquidOpacityUpperLimit){
+                    opacityFactor = liquidOpacityScale;
+                }
+                else{
+                    opacityFactor = 0;
+                }
             }
             else if(alphaValue <= 254){
-                opacityFactor = objectsOpacityScale;
+                if(alphaValue >= objectsOpacityLowerLimit && alphaValue <= objectsOpacityUpperLimit){
+                    opacityFactor = objectsOpacityScale;
+                }
+                else{
+                    opacityFactor = 0;
+                }
             }
             else {
                 opacityFactor = terrainOpacityScale;
