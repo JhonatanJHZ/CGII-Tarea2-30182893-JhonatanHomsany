@@ -129,13 +129,13 @@ El presente proyecto basa su implementación en el uso de buenas prácticas de l
 
 2. Manipulación de objetos: Para la manipulación, el sistema almacena el volumen cargado originalmente y mantiene un vector con los objetos insertados. Cuando el usuario realiza una modificación, se actualiza el objeto correspondiente y se regenera la escena a partir del mundo original, reinsertando todos los objetos con sus parámetros actualizados.
 
-El motivo principal de esta implementación es resolver los escenarios que surgen al modificar la escala de un objeto insertado:
+  El motivo principal de esta implementación es resolver los escenarios que surgen al modificar la escala de un objeto insertado:
 
 - 2.1: El usuario aumenta la escala del objeto: No representa una complicación mayor, ya que únicamente implica sobrescribir los vóxeles del mundo original según las nuevas dimensiones.
 
 - 2.2: El usuario disminuye la escala del objeto: Se presenta el problema de que los vóxeles del mundo original ya fueron sobrescritos en la inserción inicial. Por lo tanto, al reducir la escala, se pierde la información previa de los vóxeles que ocupaban ese espacio.
 
-Por esta razón, al cargar un volumen se conserva siempre una copia inmutable del volumen original. Así, modificar un objeto consiste en tomar dicho volumen base e reinsertar los objetos en su orden cronológico con sus respectivos cambios. De esta manera, y de forma transparente para el usuario, se simula que los nuevos atributos fueron aplicados desde el inicio.
+  Por esta razón, al cargar un volumen se conserva siempre una copia inmutable del volumen original. Así, modificar un objeto consiste en tomar dicho volumen base e reinsertar los objetos en su orden cronológico con sus respectivos cambios. De esta manera, y de forma transparente para el usuario, se simula que los nuevos atributos fueron aplicados desde el inicio.
 
 3. Modo Stoneburner, dirección del rayo: Al procesar la destrucción de vóxeles en la dirección del rayo, la operación genera una breve latencia de cálculo durante el procesamiento. Una vez finalizada la destrucción, el programa continúa su ejecución con normalidad.
 
