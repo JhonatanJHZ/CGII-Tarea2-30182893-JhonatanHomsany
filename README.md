@@ -84,57 +84,40 @@ En la GUI, el usuario cuenta con lo siguiente:
 
 - Cuadro de texto a modo informativo con los controles de movimiento del usuario.
 
-- Manejo de archivos: - Dimensiones del volumen: En este apartado el usuario debe ingresar las dimensiones del volumen que desea cargar. Este caso aplica únicamente cuando el usuario quiere cargar un volumen en formato .raw ya que en formato .nrrd, dicha información se encuentra presente y es extraída del archivo.
-
-      - Botones activadores del explorador de archivos del sistema para que el usuario pueda indicar de manera cómoda la ubicación del archivo que quiere guardar/cargar.
+- Manejo de archivos:
+  - Dimensiones del volumen: En este apartado el usuario debe ingresar las dimensiones del volumen que desea cargar. Este caso aplica únicamente cuando el usuario quiere cargar un volumen en formato .raw ya que en formato .nrrd, dicha información se encuentra presente y es extraída del archivo.
+  - Botones activadores del explorador de archivos del sistema para que el usuario pueda indicar de manera cómoda la ubicación del archivo que quiere guardar/cargar.
 
 - Función de transferencia:
-
-      - Controles por material: El usuario posee diferentes deslizadores o campos para la inserción de valores que le permiten modificar la opacidad de lo que se muestra en pantalla por cada material. Por cada material, tiene un slider general que permite modificar todos los objetos que se encuentran dentro del rango alpha especificado en el documento de la asignación, además, se cuenta con dos campos de inserción numérica para que así, el usuario pueda delimitar objetos de un mismo material. En otras palabras, el usuario puede seleccionar si solamente quiere ver los gases cuya opacidad se encuentra en el intervalo [1.0, 20.0].
-
-      - Rango de densidad: Al igual que la opacidad por material, la GUI contiene controles para delimitar el rango de densidad que se debe mostrar.
+  - Controles por material: El usuario posee diferentes deslizadores o campos para la inserción de valores que le permiten modificar la opacidad de lo que se muestra en pantalla por cada material. Por cada material, tiene un slider general que permite modificar todos los objetos que se encuentran dentro del rango alpha especificado en el documento de la asignación, además, se cuenta con dos campos de inserción numérica para que así, el usuario pueda delimitar objetos de un mismo material. En otras palabras, el usuario puede seleccionar si solamente quiere ver los gases cuya opacidad se encuentra en el intervalo [1.0, 20.0].
+  - Rango de densidad: Al igual que la opacidad por material, la GUI contiene controles para delimitar el rango de densidad que se debe mostrar.
 
 - Controles de los vóxeles:
-
-      - Tamaño de los vóxeles: En este apartado, el usuario puede modificar el tamaño de los vóxeles del volumen. Con esto, el usuario puede manipular el porcentaje de dibujado del volumen que quiere observar. Valores más altos permiten tener menos detalles en los vóxeles. (Ver imágenes en funcionamiento del programa).
+  - Tamaño de los vóxeles: En este apartado, el usuario puede modificar el tamaño de los vóxeles del volumen. Con esto, el usuario puede manipular el porcentaje de dibujado del volumen que quiere observar. Valores más altos permiten tener menos detalles en los vóxeles. (Ver imágenes en funcionamiento del programa).
 
 - Gizmo: Esta sección permite activar o desactivar el bounding box y los ejes en la escena (Ver imágenes en funcionamiento del programa).
 
 - Inserción de objetos:
-
-      - Profundidad: El usuario cuenta con una lista de profundidades en bits que puede contener el objeto que desea ingresar.
-
-      - Dimensiones: El usuario debe ingresar las dimensiones del objeto tal y como hizo al cargar la escena inicial. Del mismo modo, esta funcionalidad solo es necesaria para archivos .raw.
-
-      - Posición: El usuario puede modificar la posición que tendrá el objeto en el volumen una vez sea ingresado.
-
-      - Escala: El usuario puede ingresar la escala del objeto en sus componentes XYZ.
-
-      - Color: Un color picker para que el usuario indique de manera visual las componentes RGB del objeto.
+  - Profundidad: El usuario cuenta con una lista de profundidades en bits que puede contener el objeto que desea ingresar.
+  - Dimensiones: El usuario debe ingresar las dimensiones del objeto tal y como hizo al cargar la escena inicial. Del mismo modo, esta funcionalidad solo es necesaria para archivos .raw.
+  - Posición: El usuario puede modificar la posición que tendrá el objeto en el volumen una vez sea ingresado.
+  - Escala: El usuario puede ingresar la escala del objeto en sus componentes XYZ.
+  - Color: Un color picker para que el usuario indique de manera visual las componentes RGB del objeto.
 
 - Modificación de objetos insertados: Este apartado se habilita únicamente cuando el usuario ha ingresado un objeto a la escena.
-
-      - Objeto #X: El usuario posee una lista de los objetos que han sido ingresados en la escena y tiene la posibilidad de seleccionarlos para luego modificar atributos tales como, posición, escala y color. Tras hacer una modificación del objeto, es necesario presionar el botón "Modificar objeto" para poder visualizar los cambios (veáse el apartado de dificultades encontradas). El usuario también cuenta con la posibilidad de eliminar objetos.
+  - Objeto #X: El usuario posee una lista de los objetos que han sido ingresados en la escena y tiene la posibilidad de seleccionarlos para luego modificar atributos tales como, posición, escala y color. Tras hacer una modificación del objeto, es necesario presionar el botón "Modificar objeto" para poder visualizar los cambios (veáse el apartado de dificultades encontradas). El usuario también cuenta con la posibilidad de eliminar objetos.
 
 - Stoneburner:
-
-      - Checkbox para activar/desactivar el modo Stoneburner.
-
-      - Checkbox para que el modo Stoneburner siga la dirección del rayo o mantenga la destrucción en la dirección ortogonal al plano XZ.
-
-      - Deslizador para el umbral de selección. Este slider permite indicar cual debe ser el alpha que debe poseer un material para poder ser el centro del cilíndro del modo Stoneburner.
-
-      - El usuario cuenta con la posibilidad de hacer click en un lugar del volumen y realizar la destrucción con el modo stoneburner activado. Sin embargo, cuenta con controles via UI que le permiten modificar el centro del cilíndro destructor.
-
-      - Campo para ingresar el radio del cilíndro.
-
-      - Inserción del intervalo para los valores de alfa que deben ser destruidos por el modo stoneburner.
-
-      - Un botón de ejecución manual en caso de ingresar el centro via GUI.
+  - Checkbox para activar/desactivar el modo Stoneburner.
+  - Checkbox para que el modo Stoneburner siga la dirección del rayo o mantenga la destrucción en la dirección ortogonal al plano XZ.
+  - Deslizador para el umbral de selección. Este slider permite indicar cual debe ser el alpha que debe poseer un material para poder ser el centro del cilíndro del modo Stoneburner.
+  - El usuario cuenta con la posibilidad de hacer click en un lugar del volumen y realizar la destrucción con el modo stoneburner activado. Sin embargo, cuenta con controles via UI que le permiten modificar el centro del cilíndro destructor.
+  - Campo para ingresar el radio del cilíndro.
+  - Inserción del intervalo para los valores de alfa que deben ser destruidos por el modo stoneburner.
+  - Un botón de ejecución manual en caso de ingresar el centro via GUI.
 
 - Generar escena:
-
-      - Botón que permite generar una escena aleatoria de manera procedural.
+  - Botón que permite generar una escena aleatoria de manera procedural.
 
 ## Buenas prácticas llevadas a cabo en el desarrollo.
 
