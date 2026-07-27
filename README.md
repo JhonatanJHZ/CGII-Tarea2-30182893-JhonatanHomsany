@@ -32,7 +32,7 @@ Adicionalmente, la configuración de ejecución se ha establecido en modo $Relea
 
 Una vez establecidas las configuraciones, basta con utilizar el depurador local de Windows en Visual Studio 2022 para ejecutar el proyecto.
 
-Este proyecto también se encuentra disponible en la plataforma GitHub a través del siguiente enlace:
+Este proyecto también se encuentra disponible en la plataforma GitHub a través del siguiente enlace: https://github.com/JhonatanJHZ/CGII-Tarea2-30182893-JhonatanHomsany
 
 ## Librerías utilizadas.
 
