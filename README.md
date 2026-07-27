@@ -141,14 +141,44 @@ El presente proyecto basa su implementación en el uso de buenas prácticas de l
 
 ## Funcionamiento del programa.
 
-<img width="1918" height="1137" alt="image" src="https://github.com/user-attachments/assets/3cd984c5-daf7-461f-9fd7-9157abf37146" />
+<img width="1918" height="1140" alt="image" src="https://github.com/user-attachments/assets/b82136b1-e681-4743-93f6-19d9b4399a93" />
 
 <p align="center">
-  <i><b>Fig. 1.</b> Escena generada manualmente y renderizada con rasterización.</i>
+  <i><b>Fig. 1.</b> Funcionamiento del programa.</i>
 </p>
 
-<img width="1918" height="1133" alt="image" src="https://github.com/user-attachments/assets/bfafc5d8-622d-4770-b5c1-8ca50d3bd668" />
+<img width="1918" height="1142" alt="image" src="https://github.com/user-attachments/assets/26675ddb-2a20-4ae4-94a5-c91b66aa0931" />
 
 <p align="center">
-  <i><b>Fig. 2.</b> Escena generada manualmente y renderizada con Ray Tracing.</i>
+  <i><b>Fig. 2.</b> Tamaño de los vóxeles aumentado (20.0 unidades).</i>
+</p>
+
+<img width="1918" height="1140" alt="image" src="https://github.com/user-attachments/assets/3e073445-4d57-4945-af33-a9e13df2cb97" />
+
+<p align="center">
+  <i><b>Fig. 3.</b> Gizmo activado.</i>
+</p>
+
+<img width="1918" height="1140" alt="image" src="https://github.com/user-attachments/assets/0b4396d7-a6ed-431d-a186-05c91cdee2f3" />
+
+<p align="center">
+  <i><b>Fig. 4.</b> Inserción y modificación de objetos.</i>
+</p>
+
+<img width="1918" height="1140" alt="image" src="https://github.com/user-attachments/assets/6b133dbd-caba-4321-9f53-cd0dec5b9eb4" />
+
+<p align="center">
+  <i><b>Fig. 5.</b> Stoneburner convencional (dirección ortogonal al plano XZ).</i>
+</p>
+
+<img width="1918" height="1138" alt="image" src="https://github.com/user-attachments/assets/b6e2f26a-0598-47d1-9daf-1c5be4004b7b" />
+
+<p align="center">
+  <i><b>Fig. 6.</b> Stoneburner en dirección del rayo.</i>
+</p>
+
+<img width="1918" height="1135" alt="image" src="https://github.com/user-attachments/assets/f7719e5b-3ae2-4278-ae55-079028f4d813" />
+
+<p align="center">
+  <i><b>Fig. 7.</b> Escena generada proceduralmente.</i>
 </p>
